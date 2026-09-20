@@ -1,0 +1,3 @@
+Python的字典是键值对结构
+print是显示，return是交出值
+列表推导式是[x for x in ...]
