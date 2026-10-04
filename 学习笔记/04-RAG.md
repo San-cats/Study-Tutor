@@ -141,6 +141,55 @@ def embed(text):
 
 ## ⑨ 还没学的（下一步）
 
-- 向量数据库：存几百万向量的专用数据库
 - 重排序 / 相似度阈值：把噪音块挡在提示词外面
 - 语义切块：按意思切块，不是按行
+
+## ⑩ 向量数据库（2026-10-04 已学 ✅）
+
+**为什么**：内存列表三宗罪——每次启动重新 embed（烧钱）、全塞内存（装不下）、for 循环逐个比 O(N)（慢）。向量数据库一次解决：**持久化、索引、增删查**。
+
+**本质 = 持久化**：向量躺在磁盘文件夹里，程序关了还在。集合 = **模糊字典**：向量是钥匙（key），原文是答案（value），查询就是"找意思最近的钥匙"。
+
+**选型**：ChromaDB（纯 Python、持久化+索引都内置）→ 入门首选；FAISS 只管索引不管存储；Milvus 要 Docker 太重。
+
+**概念链（每一级返回值都要接住）**：
+
+```python
+db = chromadb.PersistentClient(path="./chroma_data")      # 开库房门
+collection = db.get_or_create_collection("knowledge",     # 拿/建集合
+    metadata={"hnsw:space": "cosine"})
+collection.add(...) / collection.query(...) / collection.count()
+```
+
+- **get_or_create 名字即答案**：先 get，找到旧集合就用旧的——所以重启后集合还在
+- `hnsw:space: cosine`：和手写 cosine 同一标准，但**距离 = 1 − 相似度，越小越好**（方向反了！0.25 是好成绩）
+- 入库三件套：ids（门牌号，唯一）、documents（原文）、embeddings（向量）+ metadatas（来源文件名）
+
+**首次入库开关（幂等）**：
+
+```python
+if collection.count() == 0:    # 空盒子 = 从没入过库
+    逐条 embed + add           # 唯一花钱的一步
+else:
+    跳过向量化                  # 启动两次 = 启动一次的效果
+```
+
+**实战数据**（两次运行对比）：
+
+| | 第一次（删库从零） | 第二次（重启） |
+|---|---|---|
+| 启动 | 已向量化入库9条，4.1秒 | 跳过向量化，2.6秒 |
+| 检索 | 距离 0.2488 / 0.2819 / 0.4455 | **分毫不差** |
+
+**坑**：Chroma 返回的是字典套列表，build_prompt 要的是三元组列表——中间加**适配器**（收集循环）。适配器第三次见面：chat_view 过滤 / model_dump / 收集循环。
+
+**git**：chroma_data/ 进 .gitignore——数据库文件夹是**可再生数据**（随时能重新 embed 出来），和 __pycache__ 同类，不进仓库。
+
+**HNSW 索引**（知道即可）：把向量建成"高速公路网"，查询走近路，不逐个比。O(N) → O(log N)。
+
+## ⑪ 还没学的（下一步）
+
+- 重排序 / 相似度阈值
+- 语义切块
+- 多 Agent 协作
+- 评估与监控
