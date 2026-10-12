@@ -4,8 +4,13 @@ from math_tools import tools,tool_function
 
 MATH_HISTORY=[]
 MATH_SYSTEM="你是数学专家，计算问题用工具解决"
+Math_Tokens=0
+
+def get_math_Tokens():
+    return Math_Tokens
 
 def math_expert_agent(task):
+    global Math_Tokens
     MATH_HISTORY.append({"role":"user","content":task})
     while 1:
         response = client0.chat.completions.create(
@@ -13,6 +18,7 @@ def math_expert_agent(task):
             messages=MATH_HISTORY+[{"role":"system","content":MATH_SYSTEM}],
             tools=tools
         )
+        Math_Tokens +=response.usage.total_tokens
         if response.choices[0].message.tool_calls:
             print("工具调用")
             MATH_HISTORY.append(response.choices[0].message.model_dump())
