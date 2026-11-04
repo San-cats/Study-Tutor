@@ -4,7 +4,7 @@ SANDBOX = os.path.normpath("F:\\AI agent\\sandbox")   # 沙盒根目录
 
 def check_safe(path):
     """检查路径是否在沙盒内。安全返回None，危险返回错误字符串"""
-    real = os.path.normpath(path)
+    real = os.path.normpath(path)  #**规范化路径字符串**，清理路径里多余的 `.`、`..`、多余的 `/` 或 `\`，返回简化后的路径
     if not real.startswith(SANDBOX):
         return "拒绝：路径超出沙盒范围"
     return None   # None 表示安全

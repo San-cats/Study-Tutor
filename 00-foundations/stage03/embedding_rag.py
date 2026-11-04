@@ -20,7 +20,7 @@ def embed(text):
         model="BAAI/bge-m3",
         input=text,
     )
-    return response.data[0].embedding
+    return response.data[0].embedding  #返回这个片段文本对应的片段向量
 
 def load_chunks():
     chunks=[]
@@ -64,7 +64,7 @@ def cosine(a,b):
 def main():
     chunks=load_chunks()
     print(f"已加载 {len(chunks)}条知识")
-    chunk_vectors=[(name,text,embed(text)) for name,text in chunks]
+    chunk_vectors=[(name,text,embed(text)) for name,text in chunks]  #向量数据库
     print("全部向量化已完成！")
     print("输入问题开始，quit结束对话")
     while 1:

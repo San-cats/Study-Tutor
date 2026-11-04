@@ -11,7 +11,7 @@ client = OpenAI(
     base_url="https://api.deepseek.com",
 )
 
-def load_chunks():
+def load_chunks():  #分片
     chunks=[]
     for filename in os.listdir(KNOWLEDGE_DIR):
         if not filename.endswith(".txt"):
@@ -25,22 +25,21 @@ def load_chunks():
                 chunks.append((filename,line))
     return chunks
 
-def retrieve(question,chunks,top_k=3):
+def retrieve(question,chunks,top_k=3):  #召回+索引
     q_chars=[c for c in question if c not in STOPWORDS]
     scored=[]
-    for name,text in chunks:
+    for name,text in chunks:  #索引
         score=0
         for c in q_chars:
             if c in text:
                 score+=1
-        scored.append((score,name,text))
-
+        scored.append((score,name,text))  #得分，文件名，内容
     scored.sort(key=lambda x:x[0],reverse=True)
     return scored[:top_k]
 
-def build_prompt(question,results):
-    lines=[f"-{name}:{text}"for _,name,text in results]
-    context="\n".join(lines)
+def build_prompt(question,results):  #生成
+    lines=[f"-{name}:{text}"for _,name,text in results] #忽略分数，输出示例:  文件1：ABC
+    context="\n".join(lines) #将lines列表里每个元素通过\n拼接，最终是一个完整字符串
     return f"""
     参考资料:{context}
     用户提问:{question}
@@ -54,7 +53,7 @@ def main():
         question=input()
         if question=="quit":
             break
-        results=retrieve(question,chunk)
+        results=retrieve(question,chunk) #向量知识库：已将每个切片和用户问题进行相似度计算
         prompt=build_prompt(question,results)
         response=client.chat.completions.create(
             model="deepseek-chat",

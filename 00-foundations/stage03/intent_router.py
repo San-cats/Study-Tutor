@@ -169,7 +169,10 @@ def handle_knowledge(text):
                ] + KNOW_HISTORY + [
                    {"role": "user", "content": prompt},
                ]
-    response = client.chat.completions.create(model="deepseek-chat", messages=messages)
+    response = client.chat.completions.create(
+        model="deepseek-chat",
+        messages=messages
+    )
     answers = response.choices[0].message.content
     KNOW_HISTORY.append({"role": "user", "content": text})
     KNOW_HISTORY.append({"role": "assistant", "content": answers})

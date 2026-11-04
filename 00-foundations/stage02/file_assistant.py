@@ -132,7 +132,7 @@ while 1:
                     name=tc.function.name
                     args=json.loads(tc.function.arguments)
                     func=tool_functions[name]
-                    result=func(**args)
+                    result=func(**args)  #字典解包，`**args` 会把字典里的键值对，拆成**关键字参数**传给函数
                     message.append({
                         "role":"tool",
                         "tool_call_id":tc.id,

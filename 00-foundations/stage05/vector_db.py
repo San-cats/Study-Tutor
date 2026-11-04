@@ -2,17 +2,18 @@ import chromadb
 from llm import client0
 from embedding_rag import embed,load_chunks,build_prompt
 
-db=chromadb.PersistentClient(path="./chroma_data")
+db=chromadb.PersistentClient(path="./chroma_data")  #持久化，向量库数据**保存到硬盘文件夹 `./chroma_data`**，程序重启之后，知识库还在
 collection=db.get_or_create_collection("knowledge",metadata={"hnsw:space":"cosine"})
-
+#先去数据库查找名字叫 `"knowledge"` 的集合；如果存在：直接取出这个集合；如果不存在：自动新建一个名叫 knowledge 的集合
+#- `hnsw`：Chroma 默认的向量索引算法（HNSW）；`hnsw:space`：指定**向量之间距离计算方式**
 if collection.count()==0:
     chunks=load_chunks()
     for idx,(name,text) in enumerate(chunks):
         vec=embed(text)
         collection.add(
-            ids=[f"{name}:{idx}"],
-            documents=[text],
-            embeddings=[vec],
+            ids=[f"{name}:{idx}"],  #文件名:序号
+            documents=[text],  #原始分片文本，召回成功后取出拼接 prompt
+            embeddings=[vec],  #文本对应的语义向量
             metadatas=[{"file":name}]
         )
     print(f"已向量化入库{collection.count()}条")
@@ -25,12 +26,12 @@ def main():
         if question == "quit":
             break
         q_vec=embed(question)
-        result=collection.query(
+        result=collection.query(  #召回
             query_embeddings=[q_vec],
             n_results=3
         )
         result_list=[]
-        for i in range(len(result["ids"][0])):
+        for i in range(len(result["ids"][0])):  #召回的数据打包成元组放入result_list
             distance=result["distances"][0][i]
             name=result["metadatas"][0][i]["file"]
             text=result["documents"][0][i]

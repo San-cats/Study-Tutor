@@ -10,6 +10,7 @@ client = OpenAI(
     api_key=os.getenv("DEEPSEEK_API_KEY"),
     base_url="https://api.deepseek.com",
 )
+# 涉及到相似度计算，不再是单纯的字数匹配，分数累加
 
 def load_chunks():
     chunks=[]
@@ -44,16 +45,16 @@ def build_prompt(question,results):
 用户提问:{question}
 请根据参考资料回答。如果资料中没有相关信息，就说"资料中没有相关信息"，不要编造。"""
 
-def make_vocab(chunks):
-    vocab=set()
+def make_vocab(chunks):  #遍历全部知识库分片，收集里面出现过的所有单个字符，生成字符词表（词汇表 vocab）
+    vocab=set()  # set集合，自动去重，同一个字符只会存一次
     for name,text in chunks:
-        for c in text:
+        for c in text:  #遍历每一个字符
             vocab.add(c)
     return sorted(vocab)
 
-def text_to_vector(text,vocab):
-    filtered = "".join(c for c in text if c not in STOPWORDS)
-    return [filtered.count(c) for c in vocab]
+def text_to_vector(text,vocab):  #先剔除停用字符，然后对照全局字符词表 vocab，统计每个字符出现次数，生成数字向量
+    filtered = "".join(c for c in text if c not in STOPWORDS)  # 过滤：保留不在停用词里的字符，拼接成新字符串filtered
+    return [filtered.count(c) for c in vocab]  # 遍历词表vocab里的每一个字符c，统计c在filtered中出现次数，组成向量
 
 def cosine(a,b):
     dot=sum(x * y for x,y in zip(a,b))

@@ -1,5 +1,8 @@
 # 写一个函数，统计一个字符串里有多少个元音字母(a e i o u)
 # 例如：count_vowels("hello world") 返回 3
+
+import os
+KNOWLEDGE_DIR="F:\\AI agent\\sandbox\\knowledge"
 def count_vowels(text):
     res=0
     for char in text:
@@ -59,16 +62,28 @@ def duplicate_encode(word):
         else:
             res.append(")")
     return "".join(res)
+
+def load_chunks():  #分片
+    chunks=[]
+    for filename in os.listdir(KNOWLEDGE_DIR):
+        if not filename.endswith(".txt"):
+            continue
+        path=os.path.join(KNOWLEDGE_DIR,filename)
+        with open(path,"r",encoding="utf-8") as f:
+            content=f.read()
+            chunks.append(content)
+    return chunks
 """
 print(duplicate_encode("din"))      # (((
 print(duplicate_encode("recede"))   # ()()()
 print(duplicate_encode("Success"))  # )())())  注意大小写不同算不同字符
 """
 
+def try_1():
+    explain={"explain":[{"【可取之处】":"...","【不足漏洞】":"...","【知识点温习】":"...","【修改引导】":"..."}]}
+    return explain
+
 if __name__=="__main__":
-    print(duplicate_encode("din"))  # (((
-    print(duplicate_encode("recede"))  # ()()()
-    print(duplicate_encode("Success"))  # )())())
-    print(likes(["小明"]))  # 小明 likes this
-    print(high_and_low("1 9 3 4 -5"))  # 9 -5
-    print(disemvowel("This website is for losers!"))
+    for k,v in try_1()["explain"][0].items():
+        print(k)
+        print(v)

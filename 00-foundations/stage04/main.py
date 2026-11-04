@@ -16,10 +16,10 @@ SYSTEM = """你是一个意图分类器。你的唯一任务是判断用户输�
 - chat：闲聊，打招呼，无关话题（比如“你好”）
 - knowledge:查知识，问概念，不涉及计算词
 [输出要求]
-1.只输出 JSON对象，格式 {"intent": "math"}，禁止输出任何解释、思考过程、markdown代码标记块
+1.只输出 JSON对象，格式 {"intent": "类别"}，禁止输出任何解释、思考过程、markdown代码标记块
 2.JSON字段的“intent”，从上面3个类别中选且只选一个，值必须与类别名完全一致
 3.禁止把"类别"当成值输出
-4. 如果当前输入含"它/那/再"等指代词，结合上文判断意图  
+4. 如果当前输入含"它/那/再/他/她"等指代词，结合上文判断意图  
 [输出示例]
 示例1:
 输入:帮我计算5+8
@@ -61,7 +61,7 @@ while 1:
     if text=="quit":
         break
     result=classify(text)
-    intent=result.get("intent","chat")
+    intent=result.get("intent","chat")  #从字典读取`intent`的值；**如果 key 不存在，默认返回`"chat"`**
     if intent not in DISPATCH:
         print(f"【警告】分类器输出异常")
         intent="chat"
