@@ -3,3 +3,6 @@ venv/
 __pycache__/
 .idea/
 chroma_data/
+chroma_notes/
+mastery.json
+Mistake_Notebook.json
