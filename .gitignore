@@ -2,6 +2,7 @@
 venv/
 __pycache__/
 .idea/
+chroma_db/
 chroma_data/
 chroma_notes/
 mastery.json
