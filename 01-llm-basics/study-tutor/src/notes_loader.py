@@ -2,8 +2,7 @@ import os
 import time
 import chromadb
 from llm import client1
-
-NOTES_DIR="F:\\AI agent\\学习笔记"
+from config import CHROMA_DIR,NOTES_DIR
 
 def read_notes():  #读文件
     files=[]
@@ -42,7 +41,7 @@ def embed_many(texts):
     )
     return [d.embedding for d in response.data]
 
-db=chromadb.PersistentClient(path="./chroma_notes")
+db=chromadb.PersistentClient(path=CHROMA_DIR)
 collections=db.get_or_create_collection("study_notes",metadata={"hnsw:space":"cosine"})
 if collections.count()==0:
     X=0
@@ -99,11 +98,8 @@ def match_topic(topic):
     results=retrieve(topic)
     candidates=[]
     if results[0][0]<=0.48:
-        print(f"已找到【{topic}】主题")
         return True,[]
     else:
-        print(f"笔记里没有关于【{topic}】的主题")
-        print(f"以下有3条候选，可能是你想问:")
         for idx,(distance,name,_) in enumerate(results[:3]):
             candidates.append((idx,distance,name))
         return False,candidates

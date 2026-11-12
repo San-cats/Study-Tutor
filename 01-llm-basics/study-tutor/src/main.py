@@ -5,9 +5,8 @@ from File_operations import load_ledger,save_ledger
 from explainer_expert import explain_master
 from notes_loader import match_topic
 from review_map import show_map
+from config import MASTERY_FILE,MISTAKE_FILE
 
-MASTERY_FILE="mastery.json"
-MISTAKE_FILE="Mistake_Notebook.json"
 FIELDS = ["Examination", "answer", "results", "score"]
 Examination_paper = {"topic": "", "Examination": [], "answer": [], "results": [],  "score": []}
 Mistake_Note={"topic": "", "Examination": [],"history":[]}
@@ -68,9 +67,12 @@ if __name__=="__main__":
     print(f"----------正在查询资料库----------")
     has_topic,candidates=match_topic(topic)
     if not has_topic:
+        print(f"笔记里没有关于【{topic}】的主题")
+        print(f"以下有3条候选，可能是你想问:")
         for idx, dist, name in candidates:
             print(f"{idx+1}:--{name}(距离{dist:.2f})")
     else:
+        print(f"已找到【{topic}】主题")
         time.sleep(1)
         Examination_paper["topic"] = topic
         Mistake_Note["topic"] = topic
@@ -112,7 +114,7 @@ if __name__=="__main__":
             print(f"最终得分{score}/{len(Test)}")
             Tech = int(input("是否拉起【讲解专家】Agent?\n"))
             if Tech:
-                time.time(1)
+                time.sleep(1)
                 print("----------正在拉起【讲解专家】Agent----------")
                 time.sleep(1)
                 for i, (exam, ans, res) in enumerate(zip(
@@ -127,7 +129,7 @@ if __name__=="__main__":
                     print("--" * 20)
             Map=int(input("是否拉起【复习地图】?\n"))
             if Map:
-                time.time(1)
+                time.sleep(1)
                 print("----------正在拉起【复习地图】----------")
                 time.sleep(1)
                 show_map()

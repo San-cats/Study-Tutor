@@ -1,5 +1,5 @@
 from File_operations import load_ledger
-
+from config import MASTERY_FILE,MISTAKE_FILE
     #排列
 def display_width(s):
     return sum(2 if ord(ch) > 127 else 1 for ch in s)
@@ -14,8 +14,8 @@ def pad(s,width):
 
     #地图
 def show_map():
-    data=load_ledger("mastery.json")
-    mistake=load_ledger("Mistake_Notebook.json")
+    data=load_ledger(MASTERY_FILE)
+    mistake=load_ledger(MISTAKE_FILE)
     if data:
         print("【复习地图】")
         print(f"{pad('主题', 14)}{pad('场次', 14)}{pad('最近得分', 14)}{pad('掌握度', 14)}{pad('错题欠账', 14)}")

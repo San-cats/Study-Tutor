@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+from config import ENV_FILE
 
-load_dotenv("F:\\AI agent\\.env")
+load_dotenv(ENV_FILE)
 
 client0=OpenAI(
     api_key=os.getenv("DEEPSEEK_API_KEY"),
