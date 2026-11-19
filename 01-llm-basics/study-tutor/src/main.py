@@ -1,7 +1,6 @@
-import time
 from quiz_master import quiz_master
 from grader import Judge
-from File_operations import load_ledger,save_ledger
+from File_operations import load_ledger,save_ledger,append_topic,take_mistakes,drop_mistakes
 from explainer_expert import explain_master
 from notes_loader import match_topic
 from review_map import show_map
@@ -10,34 +9,6 @@ from config import MASTERY_FILE,MISTAKE_FILE
 FIELDS = ["Examination", "answer", "results", "score"]
 Examination_paper = {"topic": "", "Examination": [], "answer": [], "results": [],  "score": []}
 Mistake_Note={"topic": "", "Examination": [],"history":[]}
-
-    #账本
-def append_topic(data,topic,field,value):
-    for theme in data: #theme:大字典，列表中的一个元素
-        if theme.get("topic")==topic:
-            theme.setdefault(field, []).extend(value if isinstance(value, (list, tuple)) else [value])
-            return data
-    new_theme = {"topic": topic}
-    new_theme[field] = value if isinstance(value, (list, tuple)) else [value]
-    data.append(new_theme)
-    return data
-
-    #错题
-def take_mistakes(data,topic,n=2):
-    for theme in data:
-        if theme.get("topic")==topic:
-            return theme["Examination"][:n]
-    return []
-
-def drop_mistakes(data,topic,question):
-    for item in data:
-        if item.get("topic")==topic:
-            item["Examination"]=[
-                q for q in item.get("Examination",[])
-                if q.get("question") !=question
-            ]
-            break
-    return data
 
     #考试
 def start_quiz(topic):
@@ -73,7 +44,6 @@ if __name__=="__main__":
             print(f"{idx+1}:--{name}(距离{dist:.2f})")
     else:
         print(f"已找到【{topic}】主题")
-        time.sleep(1)
         Examination_paper["topic"] = topic
         Mistake_Note["topic"] = topic
 
@@ -94,7 +64,6 @@ if __name__=="__main__":
         Test = start_quiz(topic)  # Exam:[{question:...,answer:...},...]
         if Test:
             print("----------正在拉起【出题专家】Agent----------")
-            time.sleep(1)
             for item in Test:
                 print(f"【问题】:\n{item['question']}")
                 result = ask_one(item["question"], item["answer"])
@@ -112,11 +81,10 @@ if __name__=="__main__":
                 mistake = append_topic(mistake, topic, "Examination", Mistake_Note["Examination"])
                 save_ledger(mistake, MISTAKE_FILE)
             print(f"最终得分{score}/{len(Test)}")
+
             Tech = int(input("是否拉起【讲解专家】Agent?\n"))
             if Tech:
-                time.sleep(1)
                 print("----------正在拉起【讲解专家】Agent----------")
-                time.sleep(1)
                 for i, (exam, ans, res) in enumerate(zip(
                         Examination_paper["Examination"],
                         Examination_paper["answer"],
@@ -127,12 +95,12 @@ if __name__=="__main__":
                         print(k)
                         print(v)
                     print("--" * 20)
+
             Map=int(input("是否拉起【复习地图】?\n"))
             if Map:
-                time.sleep(1)
                 print("----------正在拉起【复习地图】----------")
-                time.sleep(1)
-                show_map()
+                for i in show_map():
+                    print(i)
 
 
 

@@ -16,9 +16,10 @@ def pad(s,width):
 def show_map():
     data=load_ledger(MASTERY_FILE)
     mistake=load_ledger(MISTAKE_FILE)
+    learn_map=[]
     if data:
-        print("【复习地图】")
-        print(f"{pad('主题', 14)}{pad('场次', 14)}{pad('最近得分', 14)}{pad('掌握度', 14)}{pad('错题欠账', 14)}")
+        learn_map.append("【复习地图】")
+        learn_map.append(f"{pad('主题', 14)}{pad('场次', 14)}{pad('最近得分', 14)}{pad('掌握度', 14)}{pad('错题欠账', 14)}")
         for theme in data:
             debt=0
             session=len(theme["score"])
@@ -28,10 +29,11 @@ def show_map():
                 if theme["topic"]==item["topic"]:
                     debt=len(item["Examination"])
                     break
-            print(f"{pad(theme['topic'], 14)}{pad(str(session), 12)}{pad(f'{str(last_score)}/3', 14)}{pad(starts, 14)}{pad(str(debt), 14)}")
+            learn_map.append(f"{pad(theme['topic'], 14)}{pad(str(session), 12)}{pad(f'{str(last_score)}/3', 14)}{pad(starts, 14)}{pad(str(debt), 14)}")
     else:
-        print("还没有考试记录哦！先去考一场")
-        return None
+        learn_map.append("还没有考试记录哦！先去考一场")
+    return learn_map
 
 if __name__=="__main__":
-    show_map()
+    for i in show_map():
+        print(i)
