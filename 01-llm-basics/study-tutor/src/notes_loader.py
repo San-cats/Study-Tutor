@@ -3,7 +3,7 @@ import time
 import chromadb
 from llm import client1
 from config import CHROMA_DIR,NOTES_DIR
-
+from summary import refine_topics_parallel
 def read_notes():  #读文件
     files=[]
     for filename in os.listdir(NOTES_DIR):
@@ -43,6 +43,7 @@ def embed_many(texts):
 
 db=chromadb.PersistentClient(path=CHROMA_DIR)
 collections=db.get_or_create_collection("study_notes",metadata={"hnsw:space":"cosine"})
+
 if collections.count()==0:
     X=0
     All_times=0
@@ -55,7 +56,9 @@ if collections.count()==0:
         text_items=[items[1] for items in batch]
         vec_items=embed_many(text_items)
         ids_items=[f"{name}:{i+offset}" for offset,name in enumerate(name_items)]
-        meta_items=[{"source":name} for name in name_items]
+        topics = refine_topics_parallel(text_items)
+        meta_items = [{"source": name, "topic": ", ".join(t["Summary"])}
+                      for name, t in zip(name_items, topics)]
         collections.add(
             ids=ids_items,
             documents=text_items,
@@ -82,11 +85,12 @@ def retrieve(question):
         distance=result["distances"][0][i]
         name=result["metadatas"][0][i]["source"]
         text=result["documents"][0][i]
-        result_list.append((distance,name,text))
+        tag = result["metadatas"][0][i].get("topic", "")
+        result_list.append((distance,name,text,tag))
     return result_list
 
 def build_prompt(question,results,right):
-    lines=[f"-{name}:{text}" for _,name,text in results]
+    lines=[f"-{name}[{tag}]:{text}" for _,name,text,tag in results]
     context="\n".join(lines)
     return f"""
 参考资料:{context}
@@ -100,12 +104,10 @@ def match_topic(topic):
     if results[0][0]<=0.48:
         return True,[]
     else:
-        for idx,(distance,name,_) in enumerate(results[:3]):
-            candidates.append((idx,distance,name))
+        for idx,(distance,name,_,tag) in enumerate(results[:3]):
+            candidates.append((idx,distance,name,tag))
         return False,candidates
 
 if __name__=="__main__":
-    ok,candidates=match_topic("量子力学")
-    for idx, dist, name in candidates:
-        print(f"{idx+1}:--{name}(距离{dist:.2f})")
+    pass
 

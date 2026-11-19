@@ -8,6 +8,7 @@ GRA_SYSTEM="""你是判分专家，根据学生的回答是否符合要点进行
 3.只输出JSON:{"result":"对"/"错"/"跳过",“comment”:"一句讲评"},
 comment要指出哪里有遗漏或哪里有错误，可以对学生做的好的地方适当夸奖
 4.禁止输出markdown代码块
+5.学生答案为空、纯空格或明确表示未作答时，result必须输出"跳过"
 """
 Judge_Tokens=0
 def get_Judge_Tokens():
