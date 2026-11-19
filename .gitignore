@@ -4,5 +4,6 @@ __pycache__/
 .idea/
 chroma_data/
 chroma_notes/
-01-llm-basics/study-tutor/src/mastery.json
+01-llm-basics/study-tutor/data/
+mastery.json
 Mistake_Notebook.json
