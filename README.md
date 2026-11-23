@@ -1,35 +1,31 @@
-# AI Agent 开发学习项目
+# AI Agent 开发学习仓库
 
-从零开始，学习如何开发 AI Agent（智能体）。
+从零开始的 AI Agent 开发学习总仓库。旗舰项目是 **[学习管家 Study-Tutor](01-llm-basics/study-tutor/README.md)**——基于个人学习笔记的 AI 私教。
 
 **参考路线**: [awesome-agentic-ai-zh](https://github.com/WenyuChiou/awesome-agentic-ai-zh)
 
-## 学习路线
+## 仓库结构
 
-| 阶段 | 内容 | 学完能做什么 |
-|------|------|-------------|
-| [00-foundations](./00-foundations/) | 基础环境 | Python、命令行、Git、API Key |
-| [01-llm-basics](./01-llm-basics/) | 大模型基础 | 调用 OpenAI/Claude API |
-| [02-prompt-engineering](./02-prompt-engineering/) | 提示词工程 | 写出有效的提示词 |
-| [03-agent-core](./03-agent-core/) | Agent 核心概念 | 理解 Agent 循环 |
-| [04-tool-calling](./04-tool-calling/) | 工具与函数调用 | 让 AI 调用外部工具 |
-| [05-memory-rag](./05-memory-rag/) | 记忆与知识库 | RAG、向量数据库 |
-| [06-multi-agent](./06-multi-agent/) | 多 Agent 系统 | 多个 Agent 协作 |
-| [07-safety-eval](./07-safety-eval/) | 安全与评估 | 测试、监控、安全 |
+```
+00-foundations/            # 基础环境与热身练习(环境搭建、API 初体验)
+01-llm-basics/study-tutor/ # ★ 旗舰项目:学习管家(见项目 README)
+sandbox/                   # 沙盒实验代码
+学习笔记/                  # 配套学习笔记 10 篇(语法/API/工具/RAG/踩坑/提示词/多Agent/SSH/安全/项目实战)
+```
 
-## 前提条件
+## 旗舰项目:学习管家 Study-Tutor
 
-- 一台能联网的电脑 ✅
-- Python 3.11 ✅ 已安装
-- Git ✅ 已安装
-- VS Code ✅ 已安装
-- 一个 LLM API Key（后续获取）
+基于自身学习笔记的 AI 私教——自动出题、三态判分、错题复盘、讲解教学、掌握度记忆,并提供 CLI 与 streamlit 网页双界面。
 
-## 使用方式
+- **技术栈**: 自研 RAG(ChromaDB + bge-m3 向量化)、多 Agent(出题/判分/讲解三专家)、JSON 账本记忆、回归测试三件套、streamlit 前端
+- **完整文档**: [01-llm-basics/study-tutor/README.md](01-llm-basics/study-tutor/README.md)
+- **快速开始**: 克隆后 `cd 01-llm-basics/study-tutor`,配置 `.env`(DeepSeek + SiliconFlow 双 Key),然后:
 
-每个阶段是一个文件夹，里面包含：
-- `README.md` — 该阶段的学习指南
-- `code/` — 练习代码
-- `notes/` — 学习笔记（你自己写）
+```bash
+streamlit run ui/app.py        # 网页版(推荐)
+python src/main.py             # CLI 黑窗口版
+```
 
-按阶段顺序学习，每个阶段约 2-5 天。
+## 学习轨迹
+
+路线图 8 阶段已全部完成(基础环境 → API 调用 → 提示词工程 → 工具调用 → 记忆与 RAG → 向量数据库 → 多 Agent → 安全与评估),学习过程与踩坑沉淀在 [学习笔记/](学习笔记/) 中——每篇笔记都是一段真实学费。
